@@ -1,4 +1,7 @@
-package com.investor.backofficeinvestor.services;
+package com.investor.backofficeinvestor.security;
+
+import com.investor.backofficeinvestor.security.jwt.AuthEntryPointJwt;
+import com.investor.backofficeinvestor.security.jwt.AuthTokenFilter;
 import com.investor.backofficeinvestor.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.investor.backofficeinvestor.security.jwt.AuthEntryPointJwt;
-import com.investor.backofficeinvestor.security.jwt.AuthTokenFilter;
 
 
 @Configuration

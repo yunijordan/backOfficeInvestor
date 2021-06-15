@@ -9,17 +9,18 @@ import java.util.Date;
 @Entity
 @Table(name = "payments",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "paymentId"),
-                @UniqueConstraint(columnNames = "userId"),
+                @UniqueConstraint(columnNames = "paymentId")
+//                @UniqueConstraint(columnNames = "userId"),
         })
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Size(max = 20)
-    private Long userId;
+//    @NotNull
+//    @Size(max = 20)
+//    @Column(name = "user_id")
+//    private Long userId;
 
     @NotNull
     @Size(max = 20)
@@ -28,12 +29,15 @@ public class Payment {
 
     @NotNull
     @Size(max = 20)
-    @Column(name = "paymentDate")
+    @Column(name = "payment_date")
     private Date paymentDate;
 
-    public Payment(Long id, Long userId, Long paymentId, Date paymentDate) {
+//    @ManyToOne
+//    @JoinColumn(name="user_id", referencedColumnName = "UniqueID")
+//    private User user;
+
+    public Payment(Long id, Long paymentId, Date paymentDate) {
         this.id = id;
-        this.userId = userId;
         this.paymentId = paymentId;
         this.paymentDate = paymentDate;
     }
@@ -49,13 +53,13 @@ public class Payment {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+//    public Long getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(Long userId) {
+//        this.userId = userId;
+//    }
 
     public Long getPaymentId() {
         return paymentId;
