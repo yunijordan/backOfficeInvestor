@@ -82,10 +82,10 @@ public class InvestorController {
         Map<Integer,Object> objectT = (Map)data.get("object");
         Long id = (Long) objectT.get("id");
         String object = objectT.get("object").toString();
+
         if (object.equals("charge"))
         {
-            payment.setPaymentId(id);
-            Payment result =
+            payment = paymentService.updatePayment(stripeRequest)
         }
 
 }
