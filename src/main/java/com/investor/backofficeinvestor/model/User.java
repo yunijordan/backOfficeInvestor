@@ -48,6 +48,9 @@ public class User {
                 inverseJoinColumns = @JoinColumn(name = "role_id"))
         private Set<Role> roles = new HashSet<>();
 
+        @OneToMany(mappedBy = "user")
+        private Set<Payment> payments;
+
         public User() {
         }
 
@@ -111,5 +114,13 @@ public class User {
 
         public void setValidationCode(Integer validationCode) {
                 this.validationCode = validationCode;
+        }
+
+        public Set<Payment> getPayments() {
+                return payments;
+        }
+
+        public void setPayments(Set<Payment> payments) {
+                this.payments = payments;
         }
 }

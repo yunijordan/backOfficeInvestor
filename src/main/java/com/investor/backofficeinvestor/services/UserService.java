@@ -62,6 +62,11 @@ public class UserService {
         return userRepository.save(bdUser);
     }
 
+    public User save(User user){
+        return userRepository.save(user);
+
+    }
+
 //    public User updateUser(User user) {
 //        User bdUser = userRepository.findById(user.getId())
 //                .map(dbUser -> {

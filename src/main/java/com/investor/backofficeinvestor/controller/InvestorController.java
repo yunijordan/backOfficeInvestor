@@ -72,20 +72,20 @@ public class InvestorController {
 //        return map;
 
     }
-    @PutMapping("/pay")
-    public Map<String, Object> Concept1 (@RequestBody String stripeRequest){
-        Gson gson = new Gson();
-        Map map = gson.fromJson(stripeRequest, Map.class);
-        Payment payment = new Payment();
-        String type = map.get("type").toString();
-        Map<String,Object> data = (Map<String, Object>) map.get("data");
-        Map<Integer,Object> objectT = (Map)data.get("object");
-        Long id = (Long) objectT.get("id");
-        String object = objectT.get("object").toString();
-
-        if (object.equals("charge"))
-        {
-            payment = paymentService.updatePayment(stripeRequest)
-        }
-
+//    @PutMapping("/pay")
+//    public Map<String, Object> Concept1 (@RequestBody String stripeRequest){
+//        Gson gson = new Gson();
+//        Map map = gson.fromJson(stripeRequest, Map.class);
+//        Payment payment = new Payment();
+//        String type = map.get("type").toString();
+//        Map<String,Object> data = (Map<String, Object>) map.get("data");
+//        Map<Integer,Object> objectT = (Map)data.get("object");
+//        Long id = (Long) objectT.get("id");
+//        String object = objectT.get("object").toString();
+//
+//        if (object.equals("charge"))
+//        {
+//            payment = paymentService.updatePayment(stripeRequest)
+//        }
+//
 }

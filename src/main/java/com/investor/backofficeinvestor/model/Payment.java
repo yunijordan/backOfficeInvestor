@@ -9,18 +9,13 @@ import java.util.Date;
 @Entity
 @Table(name = "payments",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "paymentId")
+                @UniqueConstraint(columnNames = "id")
 //                @UniqueConstraint(columnNames = "userId"),
         })
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-//    @NotNull
-//    @Size(max = 20)
-//    @Column(name = "user_id")
-//    private Long userId;
 
     @NotNull
     @Size(max = 20)
@@ -54,9 +49,9 @@ public class Payment {
 
 
 
-//    @ManyToOne
-//    @JoinColumn(name="user_id", referencedColumnName = "UniqueID")
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name="user_id", referencedColumnName = "id")
+    private User user;
 
 
     public Payment(Long id, Long paymentId, Date paymentDate, String payStatusCode, String payDetails, String failureCode, String failureMessage) {

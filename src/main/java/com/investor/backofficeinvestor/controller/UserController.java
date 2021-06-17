@@ -56,19 +56,13 @@ public class UserController {
     public ResponseEntity<ResponseDTO> validateOTP(@Valid @RequestBody ValidateDTO validateDTO){
         String email = validateDTO.getEmail();
         Integer code = validateDTO.getCode();
-//        ResponseDTO responseDTO = new ResponseDTO(true);
         Optional<User> result = userService.findByValidationCode(code,email);
-//        .orElseThrow(() -> new ResourceNotFoundException(String.format("User: %s not found", code)));
         if (result.isPresent()){
-            result.get().setActive(true);
-//            result.ifPresent(()-> );
-//            return ResponseEntity.status(200).body("Code Valid");
+            User user = result.get();
+            user.setActive(true);
+            userService.save(user);
             return ResponseEntity.status(200).body(new ResponseDTO(true));
-//            responseDTO.setStatus(true);
-//            return responseDTO;
         }
         return ResponseEntity.status(200).body(new ResponseDTO(false));
-//        return ResponseEntity.status(200).body("Code Invalid");
-//        return ResponseEntity.status(200).body(new MessageResponseDTO("Code valido"));
     }
 }

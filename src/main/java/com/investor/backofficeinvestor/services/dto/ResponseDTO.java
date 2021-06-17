@@ -13,6 +13,6 @@ public class ResponseDTO {
     }
 
     public ResponseDTO(Boolean status) {
-        this.status = true;
+        this.status = status;
     }
 }
