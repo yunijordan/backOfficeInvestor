@@ -4,9 +4,13 @@ package com.investor.backofficeinvestor.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.investor.backofficeinvestor.model.Payment;
+import com.investor.backofficeinvestor.services.PaymentService;
+import com.investor.backofficeinvestor.services.UserService;
 import jdk.nashorn.internal.ir.ObjectNode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +20,12 @@ import java.util.Map;
 
 @RestController
 public class InvestorController {
+    private final PaymentService paymentService;
+
+    public InvestorController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
+
 
     @PostMapping("/test")
     public String Concept (@RequestBody  String ConceptRequest){
@@ -23,7 +33,7 @@ public class InvestorController {
     }
 
     @PostMapping("/test1")
-    public Map<String, Object> Concept1 (@RequestBody String conceptRequest){
+    public Map<String, Object> Concept2 (@RequestBody String conceptRequest){
 
 //        Gson gson = new Gson();
 //        JsonParser parser = new JsonParser();
@@ -62,13 +72,20 @@ public class InvestorController {
 //        return map;
 
     }
-    @PostMapping("/test2")
-    public Map<String, String> sayHello() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("key", "value");
-        map.put("foo", "bar");
-        map.put("aa", "bb");
-        return map;
-    }
+    @PutMapping("/pay")
+    public Map<String, Object> Concept1 (@RequestBody String stripeRequest){
+        Gson gson = new Gson();
+        Map map = gson.fromJson(stripeRequest, Map.class);
+        Payment payment = new Payment();
+        String type = map.get("type").toString();
+        Map<String,Object> data = (Map<String, Object>) map.get("data");
+        Map<Integer,Object> objectT = (Map)data.get("object");
+        Long id = (Long) objectT.get("id");
+        String object = objectT.get("object").toString();
+        if (object.equals("charge"))
+        {
+            payment.setPaymentId(id);
+            Payment result =
+        }
 
 }
