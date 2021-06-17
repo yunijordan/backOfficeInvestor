@@ -1,6 +1,7 @@
 package com.investor.backofficeinvestor.model;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -36,7 +37,10 @@ public class User {
         private boolean active = false;
 
         @Column(name = "validation_code")
-        private Double validationCode = Math.floor(Math.random() * (9999-1000+1)) + 1000;
+//        private Integer validationCode = (int) Math.floor(Math.random() * (9999-1000+1)) + 1000;
+//        Random random = new Random();
+//        private Integer validationCode =  random.nextInt(9999) + 1;
+        private Integer validationCode = 55555555;
 
         @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(	name = "user_roles",
@@ -101,11 +105,11 @@ public class User {
                 this.active = active;
         }
 
-        public Double getValidationCode() {
+        public Integer getValidationCode() {
                 return validationCode;
         }
 
-        public void setValidationCode(Double validationCode) {
+        public void setValidationCode(Integer validationCode) {
                 this.validationCode = validationCode;
         }
 }

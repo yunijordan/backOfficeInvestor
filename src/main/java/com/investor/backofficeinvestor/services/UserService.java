@@ -1,8 +1,10 @@
 package com.investor.backofficeinvestor.services;
 
 
+import com.investor.backofficeinvestor.exceptions.ResourceNotFoundException;
 import com.investor.backofficeinvestor.model.User;
 import com.investor.backofficeinvestor.repository.UserRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +38,28 @@ public class UserService {
     @Transactional(readOnly = true)
     public Optional<User> findById(Long userId) {
         return userRepository.findById(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findByValidationCode(Integer code, String email) {
+        return userRepository.findByValidationCodeAndEmail(code, email);
+    }
+    public User updateUser(User user) {
+        User bdUser = userRepository.findByEmail(user.getEmail())
+                .map(dbUser -> {
+                    if (user.isActive() == false ) {
+                        dbUser.setActive(true);
+                    }
+                    return dbUser;
+                })
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User: %s not found", user.getEmail())));
+
+        return userRepository.save(bdUser);
     }
 
 //    public User updateUser(User user) {
