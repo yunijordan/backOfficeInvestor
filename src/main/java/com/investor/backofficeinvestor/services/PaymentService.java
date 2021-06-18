@@ -1,6 +1,7 @@
 package com.investor.backofficeinvestor.services;
 
 import com.investor.backofficeinvestor.model.Payment;
+import com.investor.backofficeinvestor.model.User;
 import com.investor.backofficeinvestor.repository.PaymentRepository;
 import com.investor.backofficeinvestor.services.dto.PaymentDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -24,22 +25,8 @@ public class PaymentService {
         this.paymentRepository = paymentRepository;
     }
 
-    public Payment updatePayment(PaymentDTO paymentDTO) {
-        Payment save = null;
-        Long id = paymentDTO.getId();
-        Optional<Payment> bdPayment = paymentRepository.findById(id);
-        if (bdPayment.isPresent()){
-            Payment payment1= bdPayment.get();
-            Date now = Date.from(Instant.now());
-            payment1.setPaymentDate(now);
-            String detail = payment1.getPayDetails();
-            payment1.setPayDetails(detail);
-            Long payId = payment1.getPaymentId();
-            payment1.setPaymentId(payId);
-            save = paymentRepository.save(payment1);
+    public Payment save(Payment payment){
+        return paymentRepository.save(payment);
 
-        }
-
-        return save;
     }
 }

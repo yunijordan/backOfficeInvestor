@@ -20,7 +20,7 @@ public class Payment {
     @NotNull
     @Size(max = 20)
     @Column(name = "paymentId")
-    private Long paymentId;
+    private String paymentId;
 
     @NotNull
     @Size(max = 20)
@@ -47,14 +47,12 @@ public class Payment {
     @Column(name = "failure_message")
     private String failureMessage;
 
-
-
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
 
 
-    public Payment(Long id, Long paymentId, Date paymentDate, String payStatusCode, String payDetails, String failureCode, String failureMessage) {
+    public Payment(Long id, String paymentId, Date paymentDate, String payStatusCode, String payDetails, String failureCode, String failureMessage) {
         this.id = id;
         this.paymentId = paymentId;
         this.paymentDate = paymentDate;
@@ -84,11 +82,11 @@ public class Payment {
 //    }
 
 
-    public Long getPaymentId() {
+    public String getPaymentId() {
         return paymentId;
     }
 
-    public void setPaymentId(Long paymentId) {
+    public void setPaymentId(String paymentId) {
         this.paymentId = paymentId;
     }
 
@@ -130,5 +128,13 @@ public class Payment {
 
     public void setFailureMessage(String failureMessage) {
         this.failureMessage = failureMessage;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
