@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,6 +28,11 @@ public class PaymentService {
 
     public Payment save(Payment payment){
         return paymentRepository.save(payment);
+    }
 
+    @Transactional(readOnly = true)
+    public List<Payment> findByPaymentEmail(String email, String statusCode) {
+       List<Payment> payment = paymentRepository.findByPaymentEmailAndPayStatusCodeOrderByIdDesc(email, statusCode);;
+        return payment;
     }
 }

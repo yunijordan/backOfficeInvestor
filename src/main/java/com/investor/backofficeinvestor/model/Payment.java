@@ -4,7 +4,7 @@ package com.investor.backofficeinvestor.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "payments",
@@ -19,13 +19,11 @@ public class Payment {
 
     @NotNull
     @Size(max = 20)
-    @Column(name = "paymentId")
-    private String paymentId;
+    @Column(name = "stripe_id")
+    private String stripeId;
 
-    @NotNull
-    @Size(max = 20)
     @Column(name = "payment_date")
-    private Date paymentDate;
+    private ZonedDateTime paymentDate;
 
     @NotNull
     @Size(max = 50)
@@ -51,15 +49,21 @@ public class Payment {
     @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
 
+    @Size(max = 20)
+    @Column(name = "payment_email")
+    private String paymentEmail;
 
-    public Payment(Long id, String paymentId, Date paymentDate, String payStatusCode, String payDetails, String failureCode, String failureMessage) {
+
+
+    public Payment(Long id, String stripeId, ZonedDateTime paymentDate, String payStatusCode, String payDetails, String failureCode, String failureMessage, String paymentEmail) {
         this.id = id;
-        this.paymentId = paymentId;
+        this.stripeId = stripeId;
         this.paymentDate = paymentDate;
         this.payStatusCode = payStatusCode;
         this.payDetails = payDetails;
         this.failureCode = failureCode;
         this.failureMessage = failureMessage;
+        this.paymentEmail = paymentEmail;
     }
 
     public Payment() {
@@ -82,19 +86,19 @@ public class Payment {
 //    }
 
 
-    public String getPaymentId() {
-        return paymentId;
+    public String getStripeId() {
+        return stripeId;
     }
 
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
+    public void setStripeId(String stripeId) {
+        this.stripeId = stripeId;
     }
 
-    public Date getPaymentDate() {
+    public ZonedDateTime getPaymentDate() {
         return paymentDate;
     }
 
-    public void setPaymentDate(Date paymentDate) {
+    public void setPaymentDate(ZonedDateTime paymentDate) {
         this.paymentDate = paymentDate;
     }
 
@@ -136,5 +140,13 @@ public class Payment {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getPaymentEmail() {
+        return paymentEmail;
+    }
+
+    public void setPaymentEmail(String paymentEmail) {
+        this.paymentEmail = paymentEmail;
     }
 }

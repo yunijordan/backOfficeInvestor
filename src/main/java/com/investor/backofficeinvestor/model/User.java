@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
-public class User implements UserDetails {
+public class User {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
@@ -73,25 +73,25 @@ public class User implements UserDetails {
                 return username;
         }
 
-        @Override
-        public boolean isAccountNonExpired() {
-                return true;
-        }
-
-        @Override
-        public boolean isAccountNonLocked() {
-                return true;
-        }
-
-        @Override
-        public boolean isCredentialsNonExpired() {
-                return true;
-        }
-
-        @Override
-        public boolean isEnabled() {
-                return true;
-        }
+//        @Override
+//        public boolean isAccountNonExpired() {
+//                return true;
+//        }
+//
+//        @Override
+//        public boolean isAccountNonLocked() {
+//                return true;
+//        }
+//
+//        @Override
+//        public boolean isCredentialsNonExpired() {
+//                return true;
+//        }
+//
+//        @Override
+//        public boolean isEnabled() {
+//                return true;
+//        }
 
         public void setUsername(String username) {
                 this.username = username;
@@ -105,10 +105,10 @@ public class User implements UserDetails {
                 this.email = email;
         }
 
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-                return new ArrayList(roles);
-        }
+//        @Override
+//        public Collection<? extends GrantedAuthority> getAuthorities() {
+//                return new ArrayList(roles);
+//        }
 
         public String getPassword() {
                 return password;

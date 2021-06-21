@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/v1/user")
-public class UserController {
+    @RestController
+    @RequestMapping("/api/v1/user")
+    public class UserController {
 
     private final UserService userService;
 
