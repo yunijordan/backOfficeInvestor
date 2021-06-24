@@ -1,18 +1,12 @@
 package com.investor.backofficeinvestor.services;
 
 import com.investor.backofficeinvestor.model.Payment;
-import com.investor.backofficeinvestor.model.User;
 import com.investor.backofficeinvestor.repository.PaymentRepository;
-import com.investor.backofficeinvestor.services.dto.PaymentDTO;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -26,13 +20,14 @@ public class PaymentService {
         this.paymentRepository = paymentRepository;
     }
 
-    public Payment save(Payment payment){
+    public Payment save(Payment payment) {
         return paymentRepository.save(payment);
     }
 
     @Transactional(readOnly = true)
     public List<Payment> findByPaymentEmail(String email, String statusCode) {
-       List<Payment> payment = paymentRepository.findByPaymentEmailAndPayStatusCodeOrderByIdDesc(email, statusCode);;
+        List<Payment> payment = paymentRepository.findByPaymentEmailAndPayStatusCodeOrderByIdDesc(email, statusCode);
         return payment;
     }
+
 }
