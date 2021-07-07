@@ -1,15 +1,18 @@
 package com.investor.backofficeinvestor.services;
 
 
+import com.investor.backofficeinvestor.exceptions.ApiException;
 import com.investor.backofficeinvestor.exceptions.ResourceNotFoundException;
 import com.investor.backofficeinvestor.model.User;
 import com.investor.backofficeinvestor.repository.UserRepository;
+import com.investor.backofficeinvestor.services.dto.PasswordDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Properties;
@@ -83,9 +87,6 @@ public class UserService {
 
     }
     public void sendmail(String addressDestiny , String context) throws AddressException, MessagingException, IOException {
-
-
-
         Properties props = new Properties();
         props.put("mail.smtp.auth", auth);
         props.put("mail.smtp.starttls.enable", starttls);
@@ -116,5 +117,39 @@ public class UserService {
 //            multipart.addBodyPart(attachPart);
         msg.setContent(multipart);
         Transport.send(msg);
+    }
+
+    public void resetPassword(Long userId, PasswordDTO passwordsDTO, Object authenticatedUser, Boolean force) {
+        boolean passwordChanged = applyUserChangesPasswordStrategy(userId, passwordsDTO,authenticatedUser,force);
+
+        if (!passwordChanged) {
+            throw new ApiException("wrong_permissions", "Wrong Permissions", HttpStatus.UNAUTHORIZED.value());
+        }
+    }
+
+    private boolean applyUserChangesPasswordStrategy(Long userId, PasswordDTO passwordsDTO,Object authenticatedUser, Boolean force) {
+        if (!force) {
+            char[] currentPassword = passwordsDTO.getCurrentPassword();
+            char[] candidatePassword = passwordsDTO.getNewPassword();
+
+            User dbUser = userRepository.findById(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException(String.format("User: %s not found", userId)));
+
+            if (!passwordEncoder.matches(new String(currentPassword), dbUser.getPassword())) {
+                throw new ApiException("wrong_password", "Wrong password", HttpStatus.UNAUTHORIZED
+                        .value());
+            }
+
+            if (Arrays.equals(currentPassword, candidatePassword)) {
+                throw new ApiException("same_password", "The new password must be different from the current one", HttpStatus.UNAUTHORIZED
+                        .value());
+            }
+
+            dbUser.setPassword(passwordEncoder.encode(new String(candidatePassword)));
+            userRepository.save(dbUser);
+            return true;
+        }
+
+        return false;
     }
 }

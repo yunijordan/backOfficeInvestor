@@ -2,6 +2,7 @@ package com.investor.backofficeinvestor.security.jwt;
 
 import java.util.Date;
 
+import com.investor.backofficeinvestor.model.User;
 import com.investor.backofficeinvestor.services.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
