@@ -13,10 +13,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.*;
+import javax.mail.internet.*;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.Date;
 import java.util.Optional;
+import java.util.Properties;
 
-    @RestController
+@RestController
     @RequestMapping("/api/v1/user")
     public class UserController {
 
@@ -55,9 +60,19 @@ import java.util.Optional;
         if (result.isPresent()) {
             User user = result.get();
             user.setActive(true);
+
             userService.save(user);
             return ResponseEntity.status(200).body(new ResponseDTO(true));
         }
         return ResponseEntity.status(200).body(new ResponseDTO(false));
     }
-}
+
+
+
+//        @GetMapping(value = "/sendemail")
+//        public String sendEmail() {
+//            return "Email sent successfully";
+//        }
+
+
+    }
