@@ -1,12 +1,13 @@
 package com.investor.backofficeinvestor.controller;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import com.investor.backofficeinvestor.model.ERole;
+import com.investor.backofficeinvestor.services.UserService;
 import com.investor.backofficeinvestor.model.Role;
 import com.investor.backofficeinvestor.model.User;
 import com.investor.backofficeinvestor.payload.request.LoginRequest;
@@ -39,6 +40,8 @@ public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
 
+    private final UserService userService;
+
     @Autowired
     UserRepository userRepository;
 
@@ -50,6 +53,10 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -73,7 +80,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws MessagingException, IOException {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
@@ -123,7 +130,9 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
-
+        Integer code = user.getValidationCode();
+        String email = user.getEmail();
+        userService.sendmail(email,code.toString());
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

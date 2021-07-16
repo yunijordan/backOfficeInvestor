@@ -4,12 +4,12 @@ package com.investor.backofficeinvestor.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "payments",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "paymentId")
+                @UniqueConstraint(columnNames = "id")
 //                @UniqueConstraint(columnNames = "userId"),
         })
 public class Payment {
@@ -17,29 +17,53 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @NotNull
-//    @Size(max = 20)
-//    @Column(name = "user_id")
-//    private Long userId;
-
     @NotNull
     @Size(max = 20)
-    @Column(name = "paymentId")
-    private Long paymentId;
+    @Column(name = "stripe_id")
+    private String stripeId;
 
-    @NotNull
-    @Size(max = 20)
     @Column(name = "payment_date")
-    private Date paymentDate;
+    private ZonedDateTime paymentDate;
 
-//    @ManyToOne
-//    @JoinColumn(name="user_id", referencedColumnName = "UniqueID")
-//    private User user;
+    @NotNull
+    @Size(max = 50)
+    @Column(name = "payment_status_code")
+    private String payStatusCode;
 
-    public Payment(Long id, Long paymentId, Date paymentDate) {
+    @NotNull
+    @Size(max = 20)
+    @Column(name = "payment_details")
+    private String payDetails;
+
+    @NotNull
+    @Size(max = 20)
+    @Column(name = "failure_code")
+    private String failureCode;
+
+    @NotNull
+    @Size(max = 20)
+    @Column(name = "failure_message")
+    private String failureMessage;
+
+    @ManyToOne
+    @JoinColumn(name="user_id", referencedColumnName = "id")
+    private User user;
+
+    @Size(max = 20)
+    @Column(name = "payment_email")
+    private String paymentEmail;
+
+
+
+    public Payment(Long id, String stripeId, ZonedDateTime paymentDate, String payStatusCode, String payDetails, String failureCode, String failureMessage, String paymentEmail) {
         this.id = id;
-        this.paymentId = paymentId;
+        this.stripeId = stripeId;
         this.paymentDate = paymentDate;
+        this.payStatusCode = payStatusCode;
+        this.payDetails = payDetails;
+        this.failureCode = failureCode;
+        this.failureMessage = failureMessage;
+        this.paymentEmail = paymentEmail;
     }
 
     public Payment() {
@@ -61,19 +85,68 @@ public class Payment {
 //        this.userId = userId;
 //    }
 
-    public Long getPaymentId() {
-        return paymentId;
+
+    public String getStripeId() {
+        return stripeId;
     }
 
-    public void setPaymentId(Long paymentId) {
-        this.paymentId = paymentId;
+    public void setStripeId(String stripeId) {
+        this.stripeId = stripeId;
     }
 
-    public Date getPaymentDate() {
+    public ZonedDateTime getPaymentDate() {
         return paymentDate;
     }
 
-    public void setPaymentDate(Date paymentDate) {
+    public void setPaymentDate(ZonedDateTime paymentDate) {
         this.paymentDate = paymentDate;
+    }
+
+    public String getPayStatusCode() {
+        return payStatusCode;
+    }
+
+    public void setPayStatusCode(String payStatusCode) {
+        this.payStatusCode = payStatusCode;
+    }
+
+    public String getPayDetails() {
+        return payDetails;
+    }
+
+    public void setPayDetails(String payDetails) {
+        this.payDetails = payDetails;
+    }
+
+    public String getFailureCode() {
+        return failureCode;
+    }
+
+    public void setFailureCode(String failureCode) {
+        this.failureCode = failureCode;
+    }
+
+    public String getFailureMessage() {
+        return failureMessage;
+    }
+
+    public void setFailureMessage(String failureMessage) {
+        this.failureMessage = failureMessage;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getPaymentEmail() {
+        return paymentEmail;
+    }
+
+    public void setPaymentEmail(String paymentEmail) {
+        this.paymentEmail = paymentEmail;
     }
 }
