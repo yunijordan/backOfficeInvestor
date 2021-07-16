@@ -57,7 +57,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: 405064533267.dkr.ecr.us-east-2.amazonaws.com
-        ECR_REPOSITORY: investor/backofficeinvestor
+        ECR_REPOSITORY: investor
         IMAGE_TAG: dev_v1.0
       run: |
         # Build a docker container and
