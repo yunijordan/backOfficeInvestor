@@ -38,10 +38,7 @@ public class User implements UserDetails{
         private boolean active = false;
 
         @Column(name = "validation_code")
-//        private Integer validationCode = (int) Math.floor(Math.random() * (9999-1000+1)) + 1000;
-//        Random random = new Random();
-//        private Integer validationCode =  random.nextInt(9999) + 1;
-        private Integer validationCode = 55555555;
+        private Integer validationCode = (int) Math.floor(Math.random() * (999999-100000+1)) + 100000;
 
         @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(	name = "user_roles",

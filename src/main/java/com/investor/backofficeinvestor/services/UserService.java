@@ -95,11 +95,11 @@ public class UserService {
 
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("oficialjoaquinlopez@gmail.com", "inversorinmobiliario21");
+                return new PasswordAuthentication("garciayunnier@gmail.com", "Geraldine*2021");
             }
         });
         Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress("oficialjoaquinlopez@gmail.com", false));
+        msg.setFrom(new InternetAddress("garciayunnier@gmail.com", false));
 
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(addressDestiny));
         msg.setSubject("Probando suscription");
