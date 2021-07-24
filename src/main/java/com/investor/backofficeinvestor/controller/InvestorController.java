@@ -3,13 +3,13 @@ package com.investor.backofficeinvestor.controller;
 import com.google.gson.Gson;
 import com.investor.backofficeinvestor.model.Payment;
 import com.investor.backofficeinvestor.model.User;
+import com.investor.backofficeinvestor.payload.response.MessageResponse;
+import com.investor.backofficeinvestor.repository.UserRepository;
 import com.investor.backofficeinvestor.services.PaymentService;
 import com.investor.backofficeinvestor.services.UserService;
-import com.investor.backofficeinvestor.services.dto.PaymentDTO;
 import com.investor.backofficeinvestor.services.dto.ResponseDTO;
+import com.investor.backofficeinvestor.services.dto.SuscriptionDTO;
 import com.investor.backofficeinvestor.services.dto.ValidateDTO;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,30 +25,18 @@ import java.util.Optional;
 @RestController
 public class InvestorController {
     private final PaymentService paymentService;
+    private final UserRepository userRepository;
     private final UserService userService;
 
-    public InvestorController(PaymentService paymentService, UserService userService) {
+    public InvestorController(PaymentService paymentService, UserRepository userRepository, UserService userService) {
         this.paymentService = paymentService;
         this.userService = userService;
-    }
-
-    @Operation(summary = "Get a user by Id")
-    @GetMapping("/payment/{email}")
-    public ResponseEntity<PaymentDTO> getPaymentById(@Parameter(description = "email of user to be searched") @PathVariable(value = "email") String email) {
-        String status = "succeeded";
-        List<Payment> result = paymentService.findByPaymentEmail(email, status);
-        PaymentDTO payment = new PaymentDTO();
-        Long id = result.get(0).getId();
-        payment.setPaymentId(id);
-//            .orElseThrow(() -> new ResourceNotFoundException(String.format("User: %s not found", email)));
-
-        return ResponseEntity.ok(payment);
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/pay")
     public ResponseEntity<ResponseDTO> Concept1(@RequestBody String stripeRequest) {
         Gson gson = new Gson();
-//        auth.getPrincipal();
         Map map = gson.fromJson(stripeRequest, Map.class);
         Payment payment = new Payment();
         Map<String, Object> data = (Map<String, Object>) map.get("data");
@@ -60,7 +48,6 @@ public class InvestorController {
         String email = billing_details.get("email").toString();
         Double created = (Double) map.get("created");
         Long l = created.longValue();
-//        Date date = new Date(Double.doubleToRawLongBits(l)*1000);
         Instant instant = Instant.ofEpochSecond(l);
         ZonedDateTime d = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
         if (object.equals("charge")) {
@@ -88,26 +75,36 @@ public class InvestorController {
     }
 
     @PostMapping("/suscription")
-    public ResponseEntity<ResponseDTO> Suscription(@Valid @RequestBody ValidateDTO suscriptionDTO) {
+    public ResponseEntity<?> Suscription(@Valid @RequestBody ValidateDTO suscriptionDTO) {
+
         String email = suscriptionDTO.getEmail();
         String status = "succeeded";
-        List<Payment> result = paymentService.findByPaymentEmail(email, status);
+        List<SuscriptionDTO> result = paymentService.findByPaymentEmail(email, status);
+
         if (!result.isEmpty()) {
-            Payment payment = result.get(0);
-            Long id = result.get(0).getId();
-            if (payment.getId().equals(id)) {
-                ZonedDateTime date = ZonedDateTime.now();
-                Long month = 1L;
-                ZonedDateTime datePay = payment.getPaymentDate();
-                if ((datePay.plusMonths(month)).isAfter(date)) {
-                    return ResponseEntity.status(200).body(new ResponseDTO(true));
-                }
-                return ResponseEntity.status(200).body(new ResponseDTO(false));
+            SuscriptionDTO payment = result.get(0);
+
+            ZonedDateTime date = ZonedDateTime.now();
+            ZonedDateTime datePay = payment.getPaymentdate();
+            Long month = 1L;
+
+            if ((datePay.plusMonths(month)).isAfter(date)) {
+                MessageResponse messageResponse = new MessageResponse();
+                messageResponse.setStatus(0);
+                messageResponse.setMessage("Valid suscription!");
+                return ResponseEntity.ok(messageResponse);
             }
         }
-        return ResponseEntity.status(400).body(new ResponseDTO(false));
 
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setStatus(1);
+        messageResponse.setMessage("Invalid suscription!");
+        return ResponseEntity.ok(messageResponse);
     }
 
+    @GetMapping("/payment_url")
+    public String paymentUrl() {
+        return userService.paymentUrl();
+    }
 
 }

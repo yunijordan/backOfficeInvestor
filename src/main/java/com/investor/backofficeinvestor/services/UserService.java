@@ -37,8 +37,11 @@ public class UserService {
     private String starttls;
     @Value("${investor.mail.smtp.host}")
     private String host;
-    @Value("${investor.mail.smtp.port}")
-    private String port;
+//    @Value("${investor.mail.smtp.port}")
+//    private String port;
+    @Value("${stripe.payment.url}")
+    private String paymentUrl;
+
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -91,7 +94,7 @@ public class UserService {
         props.put("mail.smtp.auth", auth);
         props.put("mail.smtp.starttls.enable", starttls);
         props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
+//        props.put("mail.smtp.port", port);
 
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -102,7 +105,7 @@ public class UserService {
         msg.setFrom(new InternetAddress("garciayunnier@gmail.com", false));
 
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(addressDestiny));
-        msg.setSubject("Probando suscription");
+        msg.setSubject("Suscription Investor");
         msg.setContent("Prueba", "text/html");
         msg.setSentDate(new Date());
 
@@ -119,30 +122,25 @@ public class UserService {
         Transport.send(msg);
     }
 
-    public void resetPassword(Long userId, PasswordDTO passwordsDTO, Object authenticatedUser, Boolean force) {
-        boolean passwordChanged = applyUserChangesPasswordStrategy(userId, passwordsDTO,authenticatedUser,force);
-
-        if (!passwordChanged) {
-            throw new ApiException("wrong_permissions", "Wrong Permissions", HttpStatus.UNAUTHORIZED.value());
-        }
+    public boolean resetPassword(String email, PasswordDTO passwordsDTO, Boolean force) {
+        boolean passwordChanged = applyUserChangesPasswordStrategy(email, passwordsDTO,force);
+        return  passwordChanged;
     }
 
-    private boolean applyUserChangesPasswordStrategy(Long userId, PasswordDTO passwordsDTO,Object authenticatedUser, Boolean force) {
+    private boolean applyUserChangesPasswordStrategy(String email, PasswordDTO passwordsDTO, Boolean force) {
         if (!force) {
             char[] currentPassword = passwordsDTO.getCurrentPassword();
             char[] candidatePassword = passwordsDTO.getNewPassword();
 
-            User dbUser = userRepository.findById(userId)
-                    .orElseThrow(() -> new ResourceNotFoundException(String.format("User: %s not found", userId)));
+            User dbUser = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException(String.format("User: %s not found", email)));
 
             if (!passwordEncoder.matches(new String(currentPassword), dbUser.getPassword())) {
-                throw new ApiException("wrong_password", "Wrong password", HttpStatus.UNAUTHORIZED
-                        .value());
+                return false;
             }
 
             if (Arrays.equals(currentPassword, candidatePassword)) {
-                throw new ApiException("same_password", "The new password must be different from the current one", HttpStatus.UNAUTHORIZED
-                        .value());
+                return false;
             }
 
             dbUser.setPassword(passwordEncoder.encode(new String(candidatePassword)));
@@ -151,5 +149,20 @@ public class UserService {
         }
 
         return false;
+    }
+
+    public boolean changesPassword(String email, String password) {
+        char[] candidatePassword = password.toCharArray();
+
+        User dbUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User: %s not found", email)));
+
+        dbUser.setPassword(passwordEncoder.encode(new String(candidatePassword)));
+        userRepository.save(dbUser);
+        return true;
+    }
+
+    public String paymentUrl(){
+        return paymentUrl;
     }
 }

@@ -2,6 +2,7 @@ package com.investor.backofficeinvestor.services;
 
 import com.investor.backofficeinvestor.model.Payment;
 import com.investor.backofficeinvestor.repository.PaymentRepository;
+import com.investor.backofficeinvestor.services.dto.SuscriptionDTO;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +26,8 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public List<Payment> findByPaymentEmail(String email, String statusCode) {
-        List<Payment> payment = paymentRepository.findByPaymentEmailAndPayStatusCodeOrderByIdDesc(email, statusCode);
+    public List<SuscriptionDTO> findByPaymentEmail(String email, String statusCode) {
+        List<SuscriptionDTO> payment = paymentRepository.findPaymentSuscription(email, statusCode);
         return payment;
     }
 

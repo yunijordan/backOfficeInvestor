@@ -1,4 +1,5 @@
 package com.investor.backofficeinvestor.controller;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -72,6 +72,14 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
+        if (!userDetails.getActive()) {
+            MessageResponse messageResponse = new MessageResponse();
+            messageResponse.setStatus(1);
+            messageResponse.setMessage("User inactive!");
+            return ResponseEntity.ok(messageResponse);
+        }
+
+
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
@@ -81,20 +89,34 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws MessagingException, IOException {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+        Optional<User> user = userRepository.findByEmail(signUpRequest.getEmail());
+
+        Boolean existInactiveUser = user.isPresent() && !user.get().isActive();
+        if (existInactiveUser) {
+            try {
+                Integer code = user.get().getValidationCode();
+                String email = user.get().getEmail();
+                userService.sendmail(email, "Your activaction code is:" +code.toString());
+            } catch (Exception exception) {
+
+            }
+
+            MessageResponse messageResponse = new MessageResponse();
+            messageResponse.setStatus(0);
+            messageResponse.setMessage("User registered successfully!");
+            return ResponseEntity.ok(messageResponse);
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+        Boolean existUser = user.isPresent();
+        if (existUser) {
+            MessageResponse messageResponse = new MessageResponse();
+            messageResponse.setStatus(1);
+            messageResponse.setMessage("User already exist!");
+            return ResponseEntity.ok(messageResponse);
         }
 
         // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
+        User newUser = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
@@ -128,11 +150,20 @@ public class AuthController {
             });
         }
 
-        user.setRoles(roles);
-        userRepository.save(user);
-        Integer code = user.getValidationCode();
-        String email = user.getEmail();
-        userService.sendmail(email,code.toString());
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        newUser.setRoles(roles);
+        userRepository.save(newUser);
+
+        try {
+            Integer code = newUser.getValidationCode();
+            String email = newUser.getEmail();
+            userService.sendmail(email, "Your activaction code is:" + code.toString());
+        } catch (Exception exception) {
+
+        }
+
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setStatus(0);
+        messageResponse.setMessage("User registered successfully!");
+        return ResponseEntity.ok(messageResponse);
     }
 }
