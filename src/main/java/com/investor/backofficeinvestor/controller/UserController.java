@@ -112,7 +112,7 @@ public class UserController {
             return ResponseEntity.ok(messageResponse);
         }
 
-        if (user.get().getValidationCode() != resetPasswordDTO.getPin()) {
+        if (!user.get().getValidationCode().equals(resetPasswordDTO.getPin())) {
             MessageResponse messageResponse = new MessageResponse();
             messageResponse.setStatus(1);
             messageResponse.setMessage("Invalid pin!");
@@ -136,7 +136,7 @@ public class UserController {
                 Integer code = (int) Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
                 user.get().setValidationCode(code);
                 userService.save(user.get());
-                userService.sendmail(signupRequest.getEmail(), code.toString());
+                userService.sendmail(signupRequest.getEmail(), "Your password has changed. Your new activaction code is:" + code.toString());
             } catch (Exception exception) {
 
             }

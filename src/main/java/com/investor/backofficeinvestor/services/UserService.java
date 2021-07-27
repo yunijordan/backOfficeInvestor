@@ -1,22 +1,16 @@
 package com.investor.backofficeinvestor.services;
 
-
-import com.investor.backofficeinvestor.exceptions.ApiException;
 import com.investor.backofficeinvestor.exceptions.ResourceNotFoundException;
 import com.investor.backofficeinvestor.model.User;
 import com.investor.backofficeinvestor.repository.UserRepository;
 import com.investor.backofficeinvestor.services.dto.PasswordDTO;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.IOException;
