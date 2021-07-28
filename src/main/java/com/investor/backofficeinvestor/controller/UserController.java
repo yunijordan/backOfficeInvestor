@@ -2,8 +2,6 @@ package com.investor.backofficeinvestor.controller;
 
 import com.investor.backofficeinvestor.exceptions.ResourceNotFoundException;
 import com.investor.backofficeinvestor.model.User;
-//import com.investor.backofficeinvestor.services.UserDetailsImpl;
-import com.investor.backofficeinvestor.payload.request.LoginRequest;
 import com.investor.backofficeinvestor.payload.request.SignupRequest;
 import com.investor.backofficeinvestor.payload.response.MessageResponse;
 import com.investor.backofficeinvestor.repository.UserRepository;
@@ -73,7 +71,6 @@ public class UserController {
 
         user.get().setActive(true);
         userService.save(user.get());
-
         MessageResponse messageResponse = new MessageResponse();
         messageResponse.setStatus(0);
         messageResponse.setMessage("User validated successful!");
@@ -136,7 +133,7 @@ public class UserController {
                 Integer code = (int) Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
                 user.get().setValidationCode(code);
                 userService.save(user.get());
-                userService.sendmail(signupRequest.getEmail(), "Your password has changed. Your new activaction code is:" + code.toString());
+//                userService.sendmail(signupRequest.getEmail(), "Your password has changed. Your new activaction code is:" + code.toString());
             } catch (Exception exception) {
 
             }

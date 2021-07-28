@@ -96,7 +96,7 @@ public class AuthController {
             try {
                 Integer code = user.get().getValidationCode();
                 String email = user.get().getEmail();
-                userService.sendmail(email, "Your activaction code is:" +code.toString());
+//                userService.sendmail(email, "Your activaction code is:" +code.toString());
             } catch (Exception exception) {
 
             }
@@ -156,7 +156,7 @@ public class AuthController {
         try {
             Integer code = newUser.getValidationCode();
             String email = newUser.getEmail();
-            userService.sendmail(email, "Your activaction code is:" + code.toString());
+//            userService.sendmail(email, "Your activaction code is:" + code.toString());
         } catch (Exception exception) {
 
         }
