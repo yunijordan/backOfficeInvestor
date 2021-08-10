@@ -1,43 +1,36 @@
 package com.investor.backofficeinvestor.controller;
 
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.investor.backofficeinvestor.exceptions.ResourceNotFoundException;
 import com.investor.backofficeinvestor.model.User;
 import com.investor.backofficeinvestor.payload.request.SignupRequest;
 import com.investor.backofficeinvestor.payload.response.MessageResponse;
 import com.investor.backofficeinvestor.repository.UserRepository;
-
+import com.investor.backofficeinvestor.services.EmailService;
 import com.investor.backofficeinvestor.services.UserService;
 import com.investor.backofficeinvestor.services.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.*;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
 
-//    @Autowired
-//    RestTemplate restTemplate;
-
     private final UserService userService;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public UserController(UserService userService, UserRepository userRepository) {
+    public UserController(UserService userService, UserRepository userRepository, EmailService emailService) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -143,7 +136,7 @@ public class UserController {
                 Integer code = (int) Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
                 user.get().setValidationCode(code);
                 userService.save(user.get());
-//                userService.sendmail(signupRequest.getEmail(), "Your password has changed. Your new activaction code is:" + code.toString());
+                emailService.sendEmail(signupRequest.getEmail(), "Su código de recuperación de usuario es:" + code.toString());
             } catch (Exception exception) {
 
             }
@@ -158,69 +151,5 @@ public class UserController {
         messageResponse.setStatus(1);
         messageResponse.setMessage("The user doesnt exist!");
         return ResponseEntity.ok(messageResponse);
-    }
-
-    @PostMapping("/sendgrid")
-    public String sendEmail(){
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer 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");
-        String url = "https://api.sendgrid.com/v3/mail/send";
-
-
-        SendGridData sendGridData = new SendGridData();
-        sendGridData.setSubject("Hello");
-
-
-
-        SendGridBody sendGridBody = new SendGridBody();
-        sendGridBody.setType("text/plain");
-        sendGridBody.setValue("Hola mundo");
-        ArrayList<SendGridBody> content = new ArrayList<>();
-        content.add(sendGridBody);
-        sendGridData.setContent(content);
-
-        SendgridEmail sendgridEmailFrom = new SendgridEmail();
-        sendgridEmailFrom.setEmail("oficialjoaquinlopez@gmail.com");
-
-        sendGridData.setFrom(sendgridEmailFrom);
-
-        SendgridEmail sendgridEmailTo = new SendgridEmail();
-        sendgridEmailTo.setEmail("oficialjoaquinlopez@gmail.com");
-
-        ArrayList<SendgridEmail> sendgridEmailsTo = new ArrayList<>();
-        sendgridEmailsTo.add(sendgridEmailTo);
-
-        SendGridTo sendGridTo = new SendGridTo();
-        sendGridTo.setTo(sendgridEmailsTo);
-
-        ArrayList<SendGridTo> arraySendgridTo = new ArrayList<>();
-        arraySendgridTo.add(sendGridTo);
-
-        SendGridPersonalization sendGridPersonalization = new SendGridPersonalization();
-        sendGridPersonalization.setPersonalization(arraySendgridTo);
-
-        ArrayList<SendGridPersonalization> personalizations = new ArrayList<>();
-        personalizations.add(sendGridPersonalization);
-
-        sendGridData.setPersonalizations(personalizations);
-
-
-        Gson gson = new Gson();
-
-           String sa = sendGridData.getPersonalizations().get(1).getPersonalization().get(1).toString();
-        Map map = gson.fromJson(sa, Map.class);
-        Map<String, Object> data = (Map<String, Object>) map.get("personalizations");
-        System.out.println(data);
-
-        HttpEntity<SendGridData> entity = new HttpEntity<SendGridData>(sendGridData,headers);
-
-
-        return restTemplate.exchange(
-                url, HttpMethod.POST, entity, String.class).getBody();
-
     }
 }

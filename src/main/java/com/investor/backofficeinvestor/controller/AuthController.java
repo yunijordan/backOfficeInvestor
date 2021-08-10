@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.investor.backofficeinvestor.services.EmailService;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -41,6 +42,8 @@ public class AuthController {
     AuthenticationManager authenticationManager;
 
     private final UserService userService;
+    
+    private final EmailService emailService;
 
     @Autowired
     UserRepository userRepository;
@@ -54,8 +57,9 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, EmailService emailService) {
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/signin")
@@ -156,7 +160,7 @@ public class AuthController {
         try {
             Integer code = newUser.getValidationCode();
             String email = newUser.getEmail();
-//            userService.sendmail(email, "Your activaction code is:" + code.toString());
+            emailService.sendEmail(email, "Su código de activación es:" + code.toString());
         } catch (Exception exception) {
 
         }
