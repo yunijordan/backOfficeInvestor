@@ -32,7 +32,9 @@ public class EmailService {
         Content content = new Content("text/plain", emailContent);
         Mail mail = new Mail(from, subject, to, content);
 
-        SendGrid sg = new SendGrid(sendGridApiKey);
+        
+        String sendGridApiKeyEnvVariable = System.getenv("sendgrid.api.key");
+        SendGrid sg = new SendGrid(sendGridApiKeyEnvVariable);
         Request request = new Request();
         try {
           request.setMethod(Method.POST);
