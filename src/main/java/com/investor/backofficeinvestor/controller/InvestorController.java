@@ -8,7 +8,7 @@ import com.investor.backofficeinvestor.repository.UserRepository;
 import com.investor.backofficeinvestor.services.PaymentService;
 import com.investor.backofficeinvestor.services.UserService;
 import com.investor.backofficeinvestor.services.dto.ResponseDTO;
-import com.investor.backofficeinvestor.services.dto.SuscriptionDTO;
+
 import com.investor.backofficeinvestor.services.dto.ValidateDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,33 +74,33 @@ public class InvestorController {
         return ResponseEntity.status(400).body(new ResponseDTO(false));
     }
 
-    @PostMapping("/suscription")
-    public ResponseEntity<?> Suscription(@Valid @RequestBody ValidateDTO suscriptionDTO) {
-
-        String email = suscriptionDTO.getEmail();
-        String status = "succeeded";
-        List<SuscriptionDTO> result = paymentService.findByPaymentEmail(email, status);
-
-        if (!result.isEmpty()) {
-            SuscriptionDTO payment = result.get(0);
-
-            ZonedDateTime date = ZonedDateTime.now();
-            ZonedDateTime datePay = payment.getPaymentdate();
-            Long month = 1L;
-
-            if ((datePay.plusMonths(month)).isAfter(date)) {
-                MessageResponse messageResponse = new MessageResponse();
-                messageResponse.setStatus(0);
-                messageResponse.setMessage("Valid suscription!");
-                return ResponseEntity.ok(messageResponse);
-            }
-        }
-
-        MessageResponse messageResponse = new MessageResponse();
-        messageResponse.setStatus(1);
-        messageResponse.setMessage("Invalid suscription!");
-        return ResponseEntity.ok(messageResponse);
-    }
+//    @PostMapping("/suscription")
+//    public ResponseEntity<?> Suscription(@Valid @RequestBody ValidateDTO suscriptionDTO) {
+//
+////        String email = suscriptionDTO.getEmail();
+////        String status = "succeeded";
+////        List<com.investor.backofficeinvestor.services.dto.SuscriptionDTO> result = paymentService.findByPaymentEmail(email, status);
+////
+////        if (!result.isEmpty()) {
+////            SuscriptionDTO payment = result.get(0);
+//
+////            ZonedDateTime date = ZonedDateTime.now();
+////            ZonedDateTime datePay = payment.getPaymentdate();
+////            Long month = 1L;
+//
+//            if ((datePay.plusMonths(month)).isAfter(date)) {
+//                MessageResponse messageResponse = new MessageResponse();
+//                messageResponse.setStatus(0);
+//                messageResponse.setMessage("Valid suscription!");
+//                return ResponseEntity.ok(messageResponse);
+//            }
+//        }
+//
+//        MessageResponse messageResponse = new MessageResponse();
+//        messageResponse.setStatus(1);
+//        messageResponse.setMessage("Invalid suscription!");
+//        return ResponseEntity.ok(messageResponse);
+//    }
 
     @GetMapping("/payment_url")
     public String paymentUrl() {
