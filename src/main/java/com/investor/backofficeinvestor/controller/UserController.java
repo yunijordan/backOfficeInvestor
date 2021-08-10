@@ -5,6 +5,7 @@ import com.investor.backofficeinvestor.model.User;
 import com.investor.backofficeinvestor.payload.request.SignupRequest;
 import com.investor.backofficeinvestor.payload.response.MessageResponse;
 import com.investor.backofficeinvestor.repository.UserRepository;
+import com.investor.backofficeinvestor.services.EmailService;
 import com.investor.backofficeinvestor.services.UserService;
 import com.investor.backofficeinvestor.services.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,10 +25,12 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public UserController(UserService userService, UserRepository userRepository) {
+    public UserController(UserService userService, UserRepository userRepository, EmailService emailService) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -133,7 +136,7 @@ public class UserController {
                 Integer code = (int) Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
                 user.get().setValidationCode(code);
                 userService.save(user.get());
-//                userService.sendmail(signupRequest.getEmail(), "Your password has changed. Your new activaction code is:" + code.toString());
+                emailService.sendEmail(signupRequest.getEmail(), "Su código de recuperación de usuario es:" + code.toString());
             } catch (Exception exception) {
 
             }
