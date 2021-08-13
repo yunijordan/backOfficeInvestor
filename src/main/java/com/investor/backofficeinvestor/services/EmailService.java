@@ -26,7 +26,7 @@ public class EmailService {
     private String sendGridApiKey;
     
     public Boolean sendEmail(String email, String emailContent) {
-    	Email from = new Email("oficialjoaquinlopez@gmail.com");
+    	Email from = new Email("info@inversorinmobiliario.org");
         String subject = "Contacto Inversor Inmobiliario";
         Email to = new Email(email);
         Content content = new Content("text/plain", emailContent);
